@@ -13,15 +13,9 @@ jobs:
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
       shell: powershell
 
-    - name: Installer Google Chrome
-      run: |
-        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile chrome_installer.exe
-        Start-Process -FilePath chrome_installer.exe -ArgumentList "/silent /install" -NoNewWindow -Wait
-      shell: powershell
-
     - name: Installer Apache Guacamole
       run: |
-        Invoke-WebRequest -Uri "https://downloads.apache.org/guacamole/1.5.0/binary/guacamole-1.5.0.war" -OutFile guacamole.war
+        Invoke-WebRequest -Uri "https://archive.apache.org/dist/guacamole/1.5.0/binary/guacamole-1.5.0.war" -OutFile guacamole.war
         New-Item -ItemType Directory -Path "C:\Guacamole" -Force
         Move-Item -Path guacamole.war -Destination "C:\Guacamole\guacamole.war"
       shell: powershell
@@ -38,6 +32,12 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile cloudflared.exe
         Start-Process -NoNewWindow -FilePath .\cloudflared.exe -ArgumentList "tunnel --url http://localhost:8080" -Wait
+      shell: powershell
+
+    - name: Installer Google Chrome
+      run: |
+        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile chrome_installer.exe
+        Start-Process -FilePath chrome_installer.exe -ArgumentList "/silent /install" -NoNewWindow -Wait
       shell: powershell
 
     - name: Garder le serveur actif
