@@ -25,6 +25,19 @@ jobs:
         Start-Process -FilePath parsec_installer.exe -ArgumentList "/silent" -NoNewWindow -Wait
       shell: powershell
 
+    - name: Installer TightVNC Server
+      run: |
+        Invoke-WebRequest -Uri "https://www.tightvnc.com/download/2.8.63/tightvnc-2.8.63-setup-64bit.msi" -OutFile tightvnc.msi
+        Start-Process -FilePath msiexec -ArgumentList "/i tightvnc.msi /quiet /norestart" -NoNewWindow -Wait
+      shell: powershell
+
+    - name: Configurer TightVNC avec un mot de passe par défaut
+      run: |
+        $password = "cloud123"
+        &"C:\Program Files\TightVNC\tvnserver.exe" -install
+        &"C:\Program Files\TightVNC\tvnserver.exe" -password $password -controlpassword $password
+      shell: powershell
+
     - name: Garder le serveur actif
       run: |
         ping -t localhost
