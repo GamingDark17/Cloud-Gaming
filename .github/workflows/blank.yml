@@ -22,10 +22,20 @@ jobs:
 
     - name: Configurer le serveur web pour Guacamole
       run: |
-        Invoke-WebRequest -Uri "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.14/bin/apache-tomcat-10.1.14-windows-x64.zip" -OutFile tomcat.zip
-        Expand-Archive -Path tomcat.zip -DestinationPath "C:\Tomcat"
-        Move-Item -Path "C:\Guacamole\guacamole.war" -Destination "C:\Tomcat\webapps\"
-        Start-Process -FilePath "C:\Tomcat\bin\startup.bat" -NoNewWindow -Wait
+        $tomcatUrl = "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.14/bin/apache-tomcat-10.1.14-windows-x64.zip"
+        $tomcatZip = "tomcat.zip"
+        $tomcatDir = "C:\Tomcat"
+        
+        Invoke-WebRequest -Uri $tomcatUrl -OutFile $tomcatZip
+        Expand-Archive -Path $tomcatZip -DestinationPath $tomcatDir -Force
+        
+        if (Test-Path "$tomcatDir\bin\startup.bat") {
+          Move-Item -Path "C:\Guacamole\guacamole.war" -Destination "$tomcatDir\webapps\"
+          Start-Process -FilePath "$tomcatDir\bin\startup.bat" -NoNewWindow -Wait
+        } else {
+          Write-Host "Erreur : Tomcat n'a pas été extrait correctement."
+          exit 1
+        }
       shell: powershell
 
     - name: Installer Cloudflare Tunnel
@@ -37,4 +47,10 @@ jobs:
     - name: Installer Google Chrome
       run: |
         Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile chrome_installer.exe
-        Start-Pro
+        Start-Process -FilePath chrome_installer.exe -ArgumentList "/silent /install" -NoNewWindow -Wait
+      shell: powershell
+
+    - name: Garder le serveur actif
+      run: |
+        ping -t localhost
+      shell: cmd
