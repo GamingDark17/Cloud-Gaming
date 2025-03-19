@@ -19,16 +19,25 @@ jobs:
         Start-Process -FilePath chrome_installer.exe -ArgumentList "/silent /install" -NoNewWindow -Wait
       shell: powershell
 
-    - name: Installer Parsec
+    - name: Installer Apache Guacamole
       run: |
-        Invoke-WebRequest -Uri "https://builds.parsecgaming.com/package/parsec-windows.exe" -OutFile parsec_installer.exe
-        Start-Process -FilePath parsec_installer.exe -ArgumentList "/silent" -NoNewWindow -Wait
+        Invoke-WebRequest -Uri "https://apache.org/dyn/closer.lua/guacamole/1.5.0/binary/guacamole-1.5.0.war" -OutFile guacamole.war
+        New-Item -ItemType Directory -Path "C:\Guacamole" -Force
+        Move-Item -Path guacamole.war -Destination "C:\Guacamole\guacamole.war"
+      shell: powershell
+
+    - name: Configurer le serveur web pour Guacamole
+      run: |
+        Invoke-WebRequest -Uri "https://tomcat.apache.org/download-10.cgi" -OutFile tomcat.zip
+        Expand-Archive -Path tomcat.zip -DestinationPath "C:\Tomcat"
+        Move-Item -Path "C:\Guacamole\guacamole.war" -Destination "C:\Tomcat\webapps\"
+        Start-Process -FilePath "C:\Tomcat\bin\startup.bat" -NoNewWindow -Wait
       shell: powershell
 
     - name: Installer Cloudflare Tunnel
       run: |
         Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile cloudflared.exe
-        Start-Process -NoNewWindow -FilePath .\cloudflared.exe -ArgumentList "tunnel --url rdp://localhost:3389" -Wait
+        Start-Process -NoNewWindow -FilePath .\cloudflared.exe -ArgumentList "tunnel --url http://localhost:8080" -Wait
       shell: powershell
 
     - name: Garder le serveur actif
