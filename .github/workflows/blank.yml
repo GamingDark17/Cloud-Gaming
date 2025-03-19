@@ -34,7 +34,9 @@ jobs:
 
     - name: Exposer le Bureau à Distance via ngrok
       run: |
-        Start-Process -FilePath .\ngrok.exe -ArgumentList "tcp 3389" -NoNewWindow -Wait
+        Start-Process -NoNewWindow -FilePath .\ngrok.exe -ArgumentList "tcp 3389"
+        Start-Sleep -Seconds 5
+        .\ngrok.exe tcp 3389 --log=stdout | Select-String -Pattern "tcp://" | ForEach-Object { $_.Matches.Value }
       shell: powershell
 
     - name: Garder le serveur actif
