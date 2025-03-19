@@ -21,14 +21,14 @@ jobs:
 
     - name: Installer Apache Guacamole
       run: |
-        Invoke-WebRequest -Uri "https://apache.org/dyn/closer.lua/guacamole/1.5.0/binary/guacamole-1.5.0.war" -OutFile guacamole.war
+        Invoke-WebRequest -Uri "https://downloads.apache.org/guacamole/1.5.0/binary/guacamole-1.5.0.war" -OutFile guacamole.war
         New-Item -ItemType Directory -Path "C:\Guacamole" -Force
         Move-Item -Path guacamole.war -Destination "C:\Guacamole\guacamole.war"
       shell: powershell
 
     - name: Configurer le serveur web pour Guacamole
       run: |
-        Invoke-WebRequest -Uri "https://tomcat.apache.org/download-10.cgi" -OutFile tomcat.zip
+        Invoke-WebRequest -Uri "https://downloads.apache.org/tomcat/tomcat-10/v10.1.14/bin/apache-tomcat-10.1.14-windows-x64.zip" -OutFile tomcat.zip
         Expand-Archive -Path tomcat.zip -DestinationPath "C:\Tomcat"
         Move-Item -Path "C:\Guacamole\guacamole.war" -Destination "C:\Tomcat\webapps\"
         Start-Process -FilePath "C:\Tomcat\bin\startup.bat" -NoNewWindow -Wait
