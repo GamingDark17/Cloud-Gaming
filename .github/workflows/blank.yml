@@ -25,18 +25,18 @@ jobs:
         Start-Process -FilePath parsec_installer.exe -ArgumentList "/silent" -NoNewWindow -Wait
       shell: powershell
 
-    - name: Installer ngrok
+    - name: Installer ngrok (version 3.x)
       run: |
-        Invoke-WebRequest -Uri "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip" -OutFile ngrok.zip
+        Invoke-WebRequest -Uri "https://github.com/inconshreveable/ngrok/releases/latest/download/ngrok-windows-amd64.zip" -OutFile ngrok.zip
         Expand-Archive ngrok.zip -DestinationPath .
-        .\ngrok.exe authtoken 2uXwqqfzP4aUZ5lv8o8EJldgXon_2PfuJUjYe3rkzyjKcqAHq
+        .\ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
       shell: powershell
 
     - name: Exposer le Bureau à Distance via ngrok
       run: |
-        Start-Process -NoNewWindow -FilePath .\ngrok.exe -ArgumentList "tcp 3389"
+        Start-Process -NoNewWindow -FilePath .\ngrok -ArgumentList "tcp 3389"
         Start-Sleep -Seconds 5
-        .\ngrok.exe tcp 3389 --log=stdout | Select-String -Pattern "tcp://" | ForEach-Object { $_.Matches.Value }
+        .\ngrok tcp 3389 --log=stdout | Select-String -Pattern "tcp://" | ForEach-Object { $_.Matches.Value }
       shell: powershell
 
     - name: Garder le serveur actif
