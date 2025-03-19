@@ -13,10 +13,10 @@ jobs:
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
       shell: powershell
 
-    - name: Installer Cloudflare Tunnel pour RDP
+    - name: Télécharger et installer Parsec
       run: |
-        Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile cloudflared.exe
-        Start-Process -NoNewWindow -FilePath .\cloudflared.exe -ArgumentList "tunnel --url rdp://localhost:3389" -Wait
+        Invoke-WebRequest -Uri "https://builds.parsecgaming.com/package/parsec-windows.exe" -OutFile parsec.exe
+        Start-Process -FilePath parsec.exe -ArgumentList "/silent" -NoNewWindow -Wait
       shell: powershell
 
     - name: Installer Google Chrome
