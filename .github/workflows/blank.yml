@@ -1,0 +1,31 @@
+name: Cloud Gaming Windows Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Activer le Bureau à Distance (RDP)
+      run: |
+        Set-ItemProperty "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+      shell: powershell
+
+    - name: Installer Google Chrome
+      run: |
+        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile chrome_installer.exe
+        Start-Process -FilePath chrome_installer.exe -ArgumentList "/silent /install" -NoNewWindow -Wait
+      shell: powershell
+
+    - name: Installer Parsec
+      run: |
+        Invoke-WebRequest -Uri "https://builds.parsecgaming.com/package/parsec-windows.exe" -OutFile parsec_installer.exe
+        Start-Process -FilePath parsec_installer.exe -ArgumentList "/silent" -NoNewWindow -Wait
+      shell: powershell
+
+    - name: Garder le serveur actif
+      run: |
+        ping -t localhost
+      shell: cmd
