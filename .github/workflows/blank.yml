@@ -29,7 +29,7 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip" -OutFile ngrok.zip
         Expand-Archive ngrok.zip -DestinationPath .
-        .\ngrok.exe authtoken YOUR_NGROK_AUTH_TOKEN
+        .\ngrok.exe authtoken 2uXwqqfzP4aUZ5lv8o8EJldgXon_2PfuJUjYe3rkzyjKcqAHq
       shell: powershell
 
     - name: Exposer le Bureau à Distance via ngrok
