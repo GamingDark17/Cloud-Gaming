@@ -25,17 +25,16 @@ jobs:
         Start-Process -FilePath parsec_installer.exe -ArgumentList "/silent" -NoNewWindow -Wait
       shell: powershell
 
-    - name: Installer TightVNC Server
+    - name: Installer ngrok
       run: |
-        Invoke-WebRequest -Uri "https://www.tightvnc.com/download/2.8.63/tightvnc-2.8.63-setup-64bit.msi" -OutFile tightvnc.msi
-        Start-Process -FilePath msiexec -ArgumentList "/i tightvnc.msi /quiet /norestart" -NoNewWindow -Wait
+        Invoke-WebRequest -Uri "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip" -OutFile ngrok.zip
+        Expand-Archive ngrok.zip -DestinationPath .
+        .\ngrok.exe authtoken YOUR_NGROK_AUTH_TOKEN
       shell: powershell
 
-    - name: Configurer TightVNC avec un mot de passe par défaut
+    - name: Exposer le Bureau à Distance via ngrok
       run: |
-        $password = "cloud123"
-        &"C:\Program Files\TightVNC\tvnserver.exe" -install
-        &"C:\Program Files\TightVNC\tvnserver.exe" -password $password -controlpassword $password
+        Start-Process -FilePath .\ngrok.exe -ArgumentList "tcp 3389" -NoNewWindow -Wait
       shell: powershell
 
     - name: Garder le serveur actif
